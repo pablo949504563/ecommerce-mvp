@@ -1,7 +1,7 @@
-🛒 Delphos Ecommerce MVP
+🛒 # Delphos Ecommerce MVP
 Este projeto é um MVP (Minimum Viable Product) de uma plataforma de e-commerce robusta, desenvolvida com Spring Boot 3 e MySQL. O foco principal foi aplicar padrões de arquitetura corporativa para garantir escalabilidade e segurança.
 
-🚀 Tecnologias Utilizadas
+🚀 # Tecnologias Utilizadas
 Java 17: Linguagem robusta e performática.
 
 Spring Boot 3.2.5: Framework core da aplicação.
@@ -16,7 +16,7 @@ Swagger/OpenAPI: Documentação interativa da API.
 
 Bean Validation: Validação rigorosa de inputs.
 
-🏗️ Arquitetura
+🏗️ # Arquitetura
 A aplicação segue o padrão de Arquitetura em Camadas, garantindo o desacoplamento entre as regras de negócio e a infraestrutura:
 
 Controller: Gerencia os endpoints REST e DTOs.
@@ -27,7 +27,7 @@ Repository: Interface de comunicação com o MySQL.
 
 Domain/Model: Representação das entidades do negócio.
 
-🛠️ Como Rodar o Projeto
+🛠️ # Como Rodar o Projeto
 Pré-requisitos
 Java 17 instalado.
 
@@ -52,7 +52,7 @@ mvn spring-boot:run
 📖 Documentação da API
 Após iniciar a aplicação, você pode acessar a documentação interativa através do Swagger: 🔗 http://localhost:8080/api/swagger-ui.html
 
-🌟 Diferenciais do Projeto (Senior Level)
+🌟# Diferenciais do Projeto (Senior Level)
 Atomicidade no Checkout: Uso da anotação @Transactional para garantir que o pedido só seja criado se houver estoque, revertendo a operação em caso de erro.
 
 Global Exception Handler: Respostas de erro padronizadas em JSON, evitando vazamento de logs técnicos para o cliente.
