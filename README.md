@@ -52,7 +52,7 @@ mvn spring-boot:run
 ## 📖 Documentação da API
 Após iniciar a aplicação, você pode acessar a documentação interativa através do Swagger: 🔗 http://localhost:8080/api/swagger-ui.html
 
-## 🌟 Diferenciais do Projeto (Senior Level)
+## 🌟 Diferenciais do Projeto
 Atomicidade no Checkout: Uso da anotação @Transactional para garantir que o pedido só seja criado se houver estoque, revertendo a operação em caso de erro.
 
 Global Exception Handler: Respostas de erro padronizadas em JSON, evitando vazamento de logs técnicos para o cliente.
