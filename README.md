@@ -1,4 +1,4 @@
-# 🛒 Delphos Ecommerce MVP
+# 🛒 Delphos E-commerce MVP
 Este projeto é um MVP (Minimum Viable Product) de uma plataforma de e-commerce robusta, desenvolvida com Spring Boot 3 e MySQL. O foco principal foi aplicar padrões de arquitetura corporativa para garantir escalabilidade e segurança.
 
 # 🚀 Tecnologias Utilizadas
