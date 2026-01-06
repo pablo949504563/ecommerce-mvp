@@ -17,6 +17,7 @@ import java.util.List;
 @RequestMapping("/products")
 @RequiredArgsConstructor
 @Tag(name = "Products", description = "Gerenciamento de produtos do catálogo")
+@CrossOrigin(origins = "http://localhost:5173") // Porta padrão do Vite/React
 public class ProductController {
 
     private final ProductService productService;
