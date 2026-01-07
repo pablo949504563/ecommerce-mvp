@@ -1,83 +1,110 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import ProductCard from './components/ProductCard'
+import CartSidebar from './components/CartSidebar'
+import OrderHistory from './components/OrderHistory'
 
-const API_BASE = 'http://localhost:8080/api/cart';
+const API_CART = 'http://localhost:8080/cart';
+const API_ORDERS = 'http://localhost:8080/orders';
 
 function App() {
   const [products, setProducts] = useState([])
   const [cartItems, setCartItems] = useState([])
   const [userId] = useState("cliente_demo_01")
+  const [orders, setOrders] = useState([])
 
-  // 1. Carrega Vitrine e Carrinho ao iniciar
+  // Carrega Vitrine e Carrinho ao iniciar
   useEffect(() => {
     fetchProducts();
     fetchCart();
+    fetchOrders();
   }, [])
-
+  //função para buscar os pedidos
+  const fetchOrders = () => {
+  axios.get(`${API_ORDERS}/user/${userId}`)
+    .then(res => setOrders(res.data))
+    .catch(err => console.error("Erro ao carregar histórico", err));
+  }
   const fetchProducts = () => {
-    axios.get('http://localhost:8080/api/products')
-      .then(res => setProducts(res.data));
+    axios.get('http://localhost:8080/products')
+      .then(res => setProducts(res.data))
+      .catch(err => console.error("Erro ao carregar produtos", err));
   }
 
   const fetchCart = () => {
-    axios.get(`${API_BASE}/${userId}`)
+    axios.get(`${API_CART}/${userId}`)
       .then(res => setCartItems(res.data))
       .catch(err => console.error("Erro ao carregar carrinho", err));
   }
 
   const addToCart = (productId) => {
-    axios.post(`${API_BASE}/${userId}/add`, { productId, quantity: 1 })
+    axios.post(`${API_CART}/${userId}/add`, { productId, quantity: 1 })
       .then(() => {
-        alert("Adicionado!");
-        fetchCart(); // Atualiza a lista do carrinho automaticamente
-      });
+        fetchCart(); 
+      })
+      .catch(err => alert("Erro ao adicionar produto"));
   }
 
   const clearCart = () => {
-    axios.delete(`${API_BASE}/${userId}`)
-      .then(() => fetchCart());
+    axios.delete(`${API_CART}/${userId}`)
+      .then(() => fetchCart())
+      .catch(err => console.error("Erro ao limpar carrinho", err));
+  }
+
+  const finishOrder = () => {
+    // AJUSTE OPÇÃO 2: Rota batendo com @PostMapping("/checkout/{userId}") do seu Java
+    axios.post(`${API_ORDERS}/checkout/${userId}`)
+      .then(res => {
+        alert(`Pedido #${res.data.id} realizado com sucesso!`);
+        fetchCart(); // Atualiza a tela (ficará vazio pois o backend limpou tb_cart_items)
+        fetchOrders(); // Atualiza o histórico de pedidos
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Erro ao finalizar pedido. Verifique se o carrinho não está vazio no banco.");
+      });
   }
 
   return (
-    <div style={{ display: 'flex', padding: '20px', gap: '20px', fontFamily: 'sans-serif' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f4f7f6' }}>
       
-      {/* SEÇÃO DA VITRINE */}
-      <div style={{ flex: 3 }}>
-        <h1>🛒 Vitrine Delphos</h1>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px' }}>
-          {products.map(p => (
-            <div key={p.id} style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '8px' }}>
-              <h3>{p.name}</h3>
-              <p>R$ {p.price.toFixed(2)}</p>
-              <button onClick={() => addToCart(p.id)}>Adicionar</button>
-            </div>
-          ))}
+      {/* Coluna Principal: Vitrine + Histórico */}
+      <div style={{ flex: 1, padding: '40px' }}>
+        <h1 style={{ marginBottom: '30px', color: '#2c3e50' }}>🛒 Vitrine Delphos</h1>
+        
+        {/* Grid de Produtos */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
+          gap: '25px' 
+        }}>
+          {products.length > 0 ? (
+            products.map(p => (
+              <ProductCard 
+                key={p.id} 
+                product={p} 
+                onAddToCart={addToCart} 
+              />
+            ))
+          ) : (
+            <p>Carregando produtos ou vitrine vazia...</p>
+          )}
         </div>
+
+        {/* Linha Divisora opcional */}
+        <hr style={{ margin: '50px 0', border: '0', borderTop: '1px solid #ddd' }} />
+
+        {/* NOVO: Seção de Histórico de Pedidos */}
+        <OrderHistory orders={orders} />
       </div>
 
-      {/* SEÇÃO DO CARRINHO (RESUMO) */}
-      <div style={{ flex: 1, backgroundColor: '#eee', padding: '20px', borderRadius: '8px', minHeight: '80vh' }}>
-        <h2>Seu Carrinho</h2>
-        {cartItems.length === 0 ? <p>Vazio...</p> : (
-          <>
-            {cartItems.map(item => (
-              <div key={item.id} style={{ borderBottom: '1px solid #ddd', padding: '10px 0' }}>
-                <strong>{item.product.name}</strong>
-                <p>Qtd: {item.quantity} - R$ {(item.product.price * item.quantity).toFixed(2)}</p>
-              </div>
-            ))}
-            <h3 style={{ marginTop: '20px' }}>
-              Total: R$ {cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0).toFixed(2)}
-            </h3>
-            <button onClick={clearCart} style={{ backgroundColor: 'red', color: 'white', width: '100%', padding: '10px' }}>
-              Esvaziar Carrinho
-            </button>
-            <button style={{ backgroundColor: 'green', color: 'white', width: '100%', padding: '10px', marginTop: '10px' }}>
-              Finalizar Pedido
-            </button>
-          </>
-        )}
-      </div>
+      {/* Barra Lateral do Carrinho fixa na direita */}
+      <CartSidebar 
+        items={cartItems} 
+        onClear={clearCart} 
+        onCheckout={finishOrder} 
+      />
+
     </div>
   )
 }

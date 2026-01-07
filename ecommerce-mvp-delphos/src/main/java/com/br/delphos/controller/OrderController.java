@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 @Tag(name = "Orders", description = "Finalização de pedidos e checkout")
+@CrossOrigin(origins = "http://localhost:5173")
 public class OrderController {
 
     private final OrderService orderService;
@@ -18,5 +21,18 @@ public class OrderController {
     @PostMapping("/checkout/{userId}")
     public ResponseEntity<Order> checkout(@PathVariable String userId) {
         return ResponseEntity.ok(orderService.checkout(userId));
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Order>> getOrdersByUser(@PathVariable String userId) {
+        System.out.println("--- CHAMADA RECEBIDA: Buscando histórico do usuário: " + userId + " ---");
+        List<Order> orders = orderService.getOrdersByUser(userId);
+        System.out.println("--- Pedidos encontrados: " + orders.size() + " ---");
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/teste")
+    public String teste() {
+        return "O Controller está funcionando!";
     }
 }
