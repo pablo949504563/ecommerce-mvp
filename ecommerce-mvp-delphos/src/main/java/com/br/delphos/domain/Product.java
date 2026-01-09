@@ -28,4 +28,7 @@ public class Product {
 
     @Column(nullable = false)
     private Integer stockQuantity;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }
